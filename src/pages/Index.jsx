@@ -10,7 +10,7 @@ const Index = () => {
   const handleAnalysis = (data) => {
     // In a real application, this would be processed by a backend
     // For now, we'll simulate an analysis
-    const simulatedAnalysis = {
+    const simulatedAnalysis = data.situations.map(() => ({
       emotions: {
         joy: Math.random(),
         trust: Math.random(),
@@ -28,8 +28,11 @@ const Index = () => {
         esteem: Math.random(),
         selfActualization: Math.random(),
       },
-    };
-    setAnalysis(simulatedAnalysis);
+    }));
+    setAnalysis({
+      timePoints: data.timePoints,
+      data: simulatedAnalysis,
+    });
   };
 
   return (
@@ -39,10 +42,13 @@ const Index = () => {
         <EmotionForm onSubmit={handleAnalysis} />
         {analysis && (
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <EmotionAnalysis emotions={analysis.emotions} />
-            <NeedsAnalysis needs={analysis.needs} />
+            <EmotionAnalysis emotions={analysis.data[analysis.data.length - 1].emotions} />
+            <NeedsAnalysis 
+              needs={analysis.data.map(a => a.needs)} 
+              timePoints={analysis.timePoints}
+            />
             <div className="md:col-span-2">
-              <EmotionWheel emotions={analysis.emotions} />
+              <EmotionWheel emotions={analysis.data[analysis.data.length - 1].emotions} />
             </div>
           </div>
         )}

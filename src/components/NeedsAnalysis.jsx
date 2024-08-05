@@ -1,23 +1,39 @@
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
+import { useState, useEffect } from 'react';
+import ForceGraph2D from 'react-force-graph-2d';
 
-const NeedsAnalysis = ({ needs }) => {
-  const data = Object.entries(needs).map(([name, value]) => ({
-    subject: name,
-    A: parseFloat((value * 100).toFixed(2)),
-    fullMark: 100,
-  }));
+const NeedsAnalysis = ({ needs, timePoints }) => {
+  const [graphData, setGraphData] = useState({ nodes: [], links: [] });
+
+  useEffect(() => {
+    const nodes = Object.keys(needs[0]).map(need => ({ id: need, group: 1 }));
+    const links = [];
+
+    for (let i = 0; i < timePoints.length - 1; i++) {
+      Object.keys(needs[i]).forEach(need => {
+        links.push({
+          source: need,
+          target: need,
+          value: needs[i + 1][need] - needs[i][need]
+        });
+      });
+    }
+
+    setGraphData({ nodes, links });
+  }, [needs, timePoints]);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-2xl font-semibold mb-4">Needs Analysis</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-          <PolarGrid />
-          <PolarAngleAxis dataKey="subject" />
-          <PolarRadiusAxis angle={30} domain={[0, 100]} />
-          <Radar name="Needs" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-        </RadarChart>
-      </ResponsiveContainer>
+      <h2 className="text-2xl font-semibold mb-4">Needs Analysis Over Time</h2>
+      <ForceGraph2D
+        graphData={graphData}
+        nodeLabel="id"
+        nodeAutoColorBy="group"
+        linkDirectionalParticles={2}
+        linkDirectionalParticleSpeed={d => Math.abs(d.value) * 0.01}
+        linkWidth={1}
+        width={600}
+        height={400}
+      />
     </div>
   );
 };
