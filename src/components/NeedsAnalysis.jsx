@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ForceGraph2D from 'react-force-graph-2d';
+import { ForceGraph2D } from 'react-force-graph';
 
 const NeedsAnalysis = ({ needs, timePoints }) => {
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
