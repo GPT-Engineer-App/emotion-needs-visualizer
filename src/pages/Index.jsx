@@ -40,7 +40,7 @@ const Index = () => {
       <h1 className="text-4xl font-bold mb-8 text-center">Emotion Analysis Tool</h1>
       <div className="max-w-4xl mx-auto">
         <EmotionForm onSubmit={handleAnalysis} />
-        {analysis && (
+        {analysis && analysis.data && analysis.data.length > 0 && (
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
             <EmotionAnalysis emotions={analysis.data[analysis.data.length - 1].emotions} />
             <NeedsAnalysis 

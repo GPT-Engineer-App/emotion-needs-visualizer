@@ -5,20 +5,24 @@ const NeedsAnalysis = ({ needs, timePoints }) => {
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
 
   useEffect(() => {
-    const nodes = Object.keys(needs[0]).map(need => ({ id: need, group: 1 }));
-    const links = [];
+    if (needs && needs.length > 0 && timePoints && timePoints.length > 0) {
+      const nodes = Object.keys(needs[0]).map(need => ({ id: need, group: 1 }));
+      const links = [];
 
-    for (let i = 0; i < timePoints.length - 1; i++) {
-      Object.keys(needs[i]).forEach(need => {
-        links.push({
-          source: need,
-          target: need,
-          value: needs[i + 1][need] - needs[i][need]
-        });
-      });
+      for (let i = 0; i < timePoints.length - 1; i++) {
+        if (needs[i] && needs[i + 1]) {
+          Object.keys(needs[i]).forEach(need => {
+            links.push({
+              source: need,
+              target: need,
+              value: needs[i + 1][need] - needs[i][need]
+            });
+          });
+        }
+      }
+
+      setGraphData({ nodes, links });
     }
-
-    setGraphData({ nodes, links });
   }, [needs, timePoints]);
 
   return (
